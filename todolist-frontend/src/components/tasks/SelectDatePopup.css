@@ -1,0 +1,52 @@
+.select-date-popup {
+  position: fixed;
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  z-index: 2000;
+  width: 260px;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  box-sizing: border-box;
+
+  /* ✨ Hiệu ứng fade-in như cũ */
+  opacity: 0;
+  transform: translate(-50%, -46%);
+  animation: popup-fade-in 0.25s ease-out forwards;
+}
+
+@keyframes popup-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Separator */
+.options-separator {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 8px 0;
+}
+
+/* Footer container */
+.date-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+  .select-date-popup {
+    width: 90%;
+    max-width: 320px;
+  }
+}
