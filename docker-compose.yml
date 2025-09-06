@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16
+    container_name: todolist-db
+    restart: always
+    environment:
+      POSTGRES_DB: todolistdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "090325"
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./todolist-backend
+    container_name: todolist-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./todolist-backend/.env
+    depends_on:
+      - db
+
+  frontend:
+    build: ./todolist-frontend
+    container_name: todolist-frontend
+    ports:
+      - "5173:80" # ngoài host truy cập http://localhost:5173
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+      - VITE_GOOGLE_CLIENT_ID=226792261260-jja336v07a8unfhdsv2dc6g7mu7hlck0.apps.googleusercontent.com
+      - VITE_GOOGLE_REDIRECT_URI=http://localhost:5173/google-callback
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
