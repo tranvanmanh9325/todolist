@@ -15,6 +15,7 @@ services:
   backend:
     build: ./todolist-backend
     container_name: todolist-backend
+    restart: always
     ports:
       - "8080:8080"
     env_file:
@@ -25,11 +26,12 @@ services:
   frontend:
     build: ./todolist-frontend
     container_name: todolist-frontend
+    restart: always
     ports:
       - "5173:80" # ngoài host truy cập http://localhost:5173
     environment:
-      - VITE_API_URL=http://localhost:8080/api
-      - VITE_GOOGLE_CLIENT_ID=226792261260-jja336v07a8unfhdsv2dc6g7mu7hlck0.apps.googleusercontent.com
+      - VITE_API_URL=http://backend:8080/api
+      - VITE_GOOGLE_CLIENT_ID=226792261260-7v87mlul4e2ubkgv0e68mnd45s439dvm.apps.googleusercontent.com
       - VITE_GOOGLE_REDIRECT_URI=http://localhost:5173/google-callback
     depends_on:
       - backend

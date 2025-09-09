@@ -1,12 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './GoogleCallback.css'; // CSS riêng cho Google callback
+import './GoogleCallback.css';
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
+  const hasRun = useRef(false); // 👈 ngăn chạy 2 lần trong StrictMode
 
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     const error = urlParams.get('error');
@@ -27,7 +31,7 @@ const GoogleCallback = () => {
 
     const exchangeCode = async () => {
       try {
-        const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI; // ✅ đọc từ .env
+        const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 
         console.log('🔑 Sending code + redirectUri to backend:', {
           code,
@@ -39,14 +43,13 @@ const GoogleCallback = () => {
           { code, redirectUri }
         );
 
-        // ✅ Nhận thông tin từ backend
         const { id, name, email, token, avatar } = response.data;
 
         if (!token) {
           throw new Error('No JWT returned from backend');
         }
 
-        // ✅ Lưu token + user info vào localStorage
+        // ✅ Lưu token + user info
         localStorage.setItem('token', token);
         localStorage.setItem(
           'user',
@@ -55,7 +58,7 @@ const GoogleCallback = () => {
 
         console.log('✅ Google login success:', { id, name, email, avatar });
 
-        // ✅ Sau khi login bằng Google thì vào Todo App
+        // ✅ Vào Todo App
         navigate('/app/main', { replace: true });
       } catch (err) {
         console.error('❌ Google login error:', err.response?.data || err.message);
@@ -70,7 +73,7 @@ const GoogleCallback = () => {
   return (
     <div className="google-callback-container">
       <div className="spinner" />
-      <p className="loading-text">Đang đăng nhập bằng Google...</p>
+      <p className="loading-text">Login with Google...</p>
     </div>
   );
 };
