@@ -9,7 +9,7 @@
 # Database Configuration
 # ================================
 DB_USERNAME=postgres
-DB_PASSWORD=
+DB_PASSWORD=090325
 
 # ================================
 # Mail Configuration (App Password của Gmail)
