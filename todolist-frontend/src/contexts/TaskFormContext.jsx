@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const TaskFormContext = createContext();
 
@@ -57,6 +57,21 @@ export const TaskFormProvider = ({ children }) => {
   const openOverlayForm = () => setShowOverlayForm(true);
   const closeOverlayForm = () => setShowOverlayForm(false);
 
+  // 🔹 Load tasks ngay khi provider mount
+  useEffect(() => {
+    const loadTasks = async () => {
+      try {
+        const data = await apiFetch(`${API_URL}/tasks`);
+        setTasks(data || []);
+      } catch (err) {
+        console.error("❌ Lỗi khi load tasks:", err.message);
+        setTasks([]);
+      }
+    };
+
+    loadTasks();
+  }, []);
+
   // 🔹 Submit task mới hoặc update task cũ
   const submitTask = async (task) => {
     const isEditing = Boolean(task.id);
@@ -65,10 +80,13 @@ export const TaskFormProvider = ({ children }) => {
       ? `${API_URL}/tasks/${task.id}`
       : `${API_URL}/tasks`;
 
-    const body = JSON.stringify({
-      ...task,
-      completed: isEditing ? task.completed : false,
-    });
+    // ✅ Nếu là edit → giữ nguyên dữ liệu đầy đủ
+    // ✅ Nếu là create → completed mặc định false
+    const body = JSON.stringify(
+      isEditing
+        ? { ...task }
+        : { ...task, completed: false }
+    );
 
     try {
       const data = await apiFetch(url, { method, body });

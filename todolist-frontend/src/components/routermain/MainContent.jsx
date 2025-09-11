@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './MainContent.css';
 import TaskForm from '../tasks/TaskForm';
 import TaskItem from '../tasks/TaskItem';
@@ -39,28 +39,22 @@ const MainContent = () => {
   const [editTask, setEditTask] = useState(null);
   const { tasks, setTasks, submitTask } = useTaskForm(); // ✅ dùng từ context
 
-  // 🔹 Load danh sách task khi vào trang
-  useEffect(() => {
-    apiFetch(`${API_URL}/tasks`)
-      .then((data) => setTasks(data || []))
-      .catch((err) => {
-        console.error('Lỗi khi load tasks:', err.message);
-        setTasks([]);
-      });
-  }, [setTasks]);
-
   // 🔹 Đánh dấu hoàn thành / bỏ hoàn thành
   const handleToggleComplete = (taskId, newStatus) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
     apiFetch(`${API_URL}/tasks/${taskId}`, {
       method: 'PUT',
       body: JSON.stringify({
+        ...task, // ✅ giữ nguyên title, description, type...
         completed: newStatus,
         completedAt: newStatus ? new Date().toISOString() : null,
       }),
     })
       .then((updatedTask) => {
         setTasks((prev) =>
-          prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+          prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
         );
       })
       .catch((err) => console.error('Lỗi khi cập nhật task:', err.message));

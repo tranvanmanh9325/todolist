@@ -7,6 +7,7 @@ services:
       POSTGRES_DB: todolistdb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "090325"
+      TZ: Asia/Ho_Chi_Minh   # ✅ Thêm timezone
     ports:
       - "5432:5432"
     volumes:
@@ -20,6 +21,8 @@ services:
       - "8080:8080"
     env_file:
       - ./todolist-backend/.env
+    environment:
+      - TZ=Asia/Ho_Chi_Minh   # ✅ Thêm timezone
     depends_on:
       - db
 
@@ -33,6 +36,7 @@ services:
       - VITE_API_URL=http://backend:8080/api
       - VITE_GOOGLE_CLIENT_ID=226792261260-7v87mlul4e2ubkgv0e68mnd45s439dvm.apps.googleusercontent.com
       - VITE_GOOGLE_REDIRECT_URI=http://localhost:5173/google-callback
+      - TZ=Asia/Ho_Chi_Minh   # ✅ Thêm timezone
     depends_on:
       - backend
 
